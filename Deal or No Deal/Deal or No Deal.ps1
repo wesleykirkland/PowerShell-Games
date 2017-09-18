@@ -138,7 +138,7 @@ for ($Round = 1; $Round -le 10; $Round++) {
     Clear-Host #Clean the screen each loop 
     if (!($Round -eq 10)) {
         $CasesToOpen = $RoundRules[$Round - 1].Value
-        Write-Output "Welcome to round $Round, before we continue you will have to open $CasesToOpen cases"
+        Write-Output "Welcome to round $Round, before we continue you will have to open $CasesToOpen case(s)"
 
         for ($i = 0; $i -lt $CasesToOpen; $i++) {
             #Prompt the user to select a case
@@ -161,6 +161,10 @@ for ($Round = 1; $Round -le 10; $Round++) {
         }
 
         Clear-Host
+        Write-Output 'The following values remain on the board'
+        $BriefcaseAmountsAll | Select-Object @{Name='Case';Expression={$PSItem.Name}},@{Name='Value';Expression={'${0:N2}' -f $PSItem.Value}}
+        
+        Write-Output ''
         Write-Output 'The Banker would like to make you an offer'
 
         #End of round, bankers offer
@@ -175,25 +179,25 @@ for ($Round = 1; $Round -le 10; $Round++) {
         Try {
             $BankersOfferHistory.Add($BankersOfferObject) | Out-Null
         } Catch {
-            Write-Error 'Failed to add the bankers offer to the array'
+            Write-Error 'Failed to add the Bankers offer to the array'
         }
 
         #See if the bankers offer went up or down, and inform the user
         if (!($Round -eq 1)) {
             if ($BankersOffer -lt $BankersOfferHistory[-2].BankersOffer) {
-                Write-Output ('The bankers offer has decreased from ${0} to ${1}' -f $BankersOfferHistory[-2].BankersOffer, $BankersOffer)
+                Write-Output ('The Banker''s offer has decreased from ${0} to ${1}' -f $BankersOfferHistory[-2].BankersOffer, $BankersOffer)
             } elseif ($BankersOffer -eq $BankersOfferHistory[-2].BankersOffer) {
-                Write-Output ('The bankers offer has stayed the same at {0}' -f $BankersOffer)
+                Write-Output ('The Banker''s offer has stayed the same at {0}' -f $BankersOffer)
             } else {
-                Write-Output ('The bankers offer has increased from ${0} to ${1}' -f $BankersOfferHistory[-2].BankersOffer, $BankersOffer)
+                Write-Output ('The Banker''s offer has increased from ${0} to ${1}' -f $BankersOfferHistory[-2].BankersOffer, $BankersOffer)
             }
         }
 
         #Build a menu system for the user to say Deal or No Deal!
-        $CaseSwapMessage = 'Would you like to accept the bankers offer of ${0} or continue the game?' -f $BankersOffer
+        $CaseSwapMessage = 'Would you like to accept the Banker''s offer of ${0:N0} or continue the game?' -f $BankersOffer
         
-        $OfferNoDeal = New-Object System.Management.Automation.Host.ChoiceDescription "&No Deal", 'Don''t accept the bankers offer and continue the game'
-        $OfferDeal = New-Object System.Management.Automation.Host.ChoiceDescription "&Deal", 'Accept the bankers offer and end the game'
+        $OfferNoDeal = New-Object System.Management.Automation.Host.ChoiceDescription "&No Deal", 'Don''t accept the Banker''s offer and continue the game'
+        $OfferDeal = New-Object System.Management.Automation.Host.ChoiceDescription "&Deal", 'Accept the Banker''s offer and end the game'
         
         $CaseSwapOptions = [System.Management.Automation.Host.ChoiceDescription[]]($OfferNoDeal, $OfferDeal)
         $result = $host.ui.PromptForChoice($CaseSwapTitle, $CaseSwapMessage, $CaseSwapOptions, 0) 
@@ -203,7 +207,7 @@ for ($Round = 1; $Round -le 10; $Round++) {
                 Write-Output 'NO DEAL!'
             }
             1 {
-                Write-Output ('You accepted the bankers offer of ${0}, your case was worth ${1}' -f $BankersOffer, (Get-CaseValue -Case $UsersCaseSelection -BriefcaseAmountsAllOriginal $BriefcaseAmountsAllOriginal))
+                Write-Output ('You accepted the Banker''s offer of ${0}, your case was worth ${1}' -f $BankersOffer, (Get-CaseValue -Case $UsersCaseSelection -BriefcaseAmountsAllOriginal $BriefcaseAmountsAllOriginal))
                 exit
             }
         }
