@@ -113,11 +113,11 @@ for ($Round = 1; $Round -le 10; $Round++) {
                 Select-Object @{Name='Case';Expression={$PSItem}} |
                 Out-GridView -OutputMode Single -Title 'Select your case!'
 
-            #Tell the user the value of the case
+            #Tell the user the value of the case they just selected
             $CaseValue = $BriefcaseAmountsAll[($BriefcaseAmountsAll.Name.IndexOf($RoundSelectedCase.Case))].Value
 
             #If statement to change where the decimal place is
-            if ($CaseValue -eq 0.1) {
+            if ($CaseValue -lt 1) {
                 Write-Output ('You selected case {0} which had a value of ${1:N2}' -f $RoundSelectedCase.Case, $CaseValue)
             } else {
                 Write-Output ('You selected case {0} which had a value of ${1:N0}' -f $RoundSelectedCase.Case, $CaseValue)
@@ -131,6 +131,10 @@ for ($Round = 1; $Round -le 10; $Round++) {
     } else {
         Write-Output "Welcome to round $Round, this is different and we will allow you to switch cases if you choose"
 
+        #Backup the original user selected case value
+        $UsersCaseSelectionOriginal = $BriefcaseAmountsAllOriginal[($BriefcaseAmountsAllOriginal.Name.IndexOf($UsersCaseSelection.Case))]
+
+        #Build a menu system for the user to select keep or swap their case
         $CaseSwapTitle = "Decision Time"
         $CaseSwapMessage = "Your case is $($UsersCaseSelection.Case) and you can swap with case $($BriefcaseAmountsAll.Key), would you like to switch cases?"
         
@@ -154,13 +158,21 @@ for ($Round = 1; $Round -le 10; $Round++) {
         Write-Output 'Ready to see the result?'
         Pause
 
+        #Find the value of the users current case
         $CaseValue = $BriefcaseAmountsAllOriginal[($BriefcaseAmountsAllOriginal.Name.IndexOf($UsersCaseSelection.Case))].Value
 
         #If statement to change where the decimal place is
-        if ($CaseValue -eq 0.1) {
-            Write-Output ('You win ${0:N2}!' -f $CaseValue)
+        if ($CaseValue -lt 1)  {
+            $WinningValue = '{0:N2}' -f $CaseValue
         } else {
-            Write-Output ('You win ${0:N0}!' -f $CaseValue)
+            $WinningValue = '{0:N0}' -f $CaseValue
+        }
+
+        #See if the user made a good or bad swap
+        if ($CaseValue -lt $BriefcaseAmountsAll.Value) {
+            Write-Output('Sorry but the last case was worth ${0}, you did win ${1} though!' -f $BriefcaseAmountsAll.Value,$WinningValue)
+        } else {
+            Write-Output "You won big with a grand total of $WinningValue!"
         }
     }
 }
