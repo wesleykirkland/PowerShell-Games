@@ -25,7 +25,7 @@ $RoundRules = @{
 
 #Brief Case values and randomize the order
 $BriefcaseValues = @(
-    .1
+    .01
     1
     5
     10
@@ -118,7 +118,7 @@ for ($Round = 1; $Round -le 10; $Round++) {
 
             #If statement to change where the decimal place is
             if ($CaseValue -eq 0.1) {
-                Write-Output ('You selected case {0} which had a value of ${1:N1}' -f $RoundSelectedCase.Case, $CaseValue)
+                Write-Output ('You selected case {0} which had a value of ${1:N2}' -f $RoundSelectedCase.Case, $CaseValue)
             } else {
                 Write-Output ('You selected case {0} which had a value of ${1:N0}' -f $RoundSelectedCase.Case, $CaseValue)
             }
@@ -158,7 +158,7 @@ for ($Round = 1; $Round -le 10; $Round++) {
 
         #If statement to change where the decimal place is
         if ($CaseValue -eq 0.1) {
-            Write-Output ('You win ${0:N1}!' -f $CaseValue)
+            Write-Output ('You win ${0:N2}!' -f $CaseValue)
         } else {
             Write-Output ('You win ${0:N0}!' -f $CaseValue)
         }
