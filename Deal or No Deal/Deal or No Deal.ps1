@@ -169,8 +169,8 @@ for ($Round = 1; $Round -le 10; $Round++) {
         }
 
         #See if the user made a good or bad swap
-        if ($CaseValue -lt $BriefcaseAmountsAll.Value) {
-            Write-Output('Sorry but the last case was worth ${0}, you did win ${1} though!' -f $BriefcaseAmountsAll.Value,$WinningValue)
+        if ($CaseValue -lt $UsersCaseSelectionOriginal.Value) {
+            Write-Output('Sorry but your original case was worth ${0}, you did win ${1} though!' -f $UsersCaseSelectionOriginal.Value,$WinningValue)
         } else {
             Write-Output "You won big with a grand total of $WinningValue!"
         }
