@@ -250,5 +250,3 @@ for ($Round = 1; $Round -le 10; $Round++) {
         }
     }
 }
-
-[math]::Round($CaseValue)
