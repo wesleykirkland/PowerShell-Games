@@ -161,10 +161,6 @@ for ($Round = 1; $Round -le 10; $Round++) {
         }
 
         Clear-Host
-        Write-Output 'The following values remain on the board'
-        $BriefcaseAmountsAll | Select-Object @{Name='Case';Expression={$PSItem.Name}},@{Name='Value';Expression={'${0:N2}' -f $PSItem.Value}}
-        
-        Write-Output ''
         Write-Output 'The Banker would like to make you an offer'
 
         #End of round, bankers offer
@@ -247,11 +243,12 @@ for ($Round = 1; $Round -le 10; $Round++) {
         $CaseValue = Get-CaseValue -Case $UsersCaseSelection.Case -BriefcaseAmountsAllOriginal $BriefcaseAmountsAllOriginal
 
         #See if the user made a good or bad swap
-        if ($CaseValue -lt $UsersCaseSelectionOriginal.Value) {
-            Write-Output('Sorry but your original case was worth ${0}, you did win ${1} though!' -f $UsersCaseSelectionOriginal.Value,$WinningValue)
+        if ([math]::Round($CaseValue) -lt $UsersCaseSelectionOriginal.Value) {
+            Write-Output ('Sorry but your original case was worth ${0} you did win ${1} though!' -f (Get-CaseValue -Case $UsersCaseSelectionOriginal.Name -BriefcaseAmountsAllOriginal $BriefcaseAmountsAllOriginal),$CaseValue)
         } else {
             Write-Output "You won big with a grand total of $WinningValue!"
         }
     }
 }
 
+[math]::Round($CaseValue)
