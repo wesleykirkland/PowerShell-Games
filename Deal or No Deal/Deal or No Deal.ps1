@@ -70,6 +70,7 @@ for ($i = 0; $i -lt $BriefcaseValues.Count; $i++) {
 }
 
 $BriefcaseAmountsAll = $BriefcaseAmountsAll.GetEnumerator() | Sort-Object Name
+$BriefcaseAmountsAllOriginal = $BriefcaseAmountsAll.Clone()
 
 #Functions
 #Function to remove the user selected case from the Hashtable, this will always take the real work case number and find the corresponding entry
@@ -87,7 +88,7 @@ Write-Output 'Before we can continue, you need to select a briefcase to hold ont
 Write-Output ('Remember you keep this till the end until you either keep or trade it, now select a case from {0:N0} to {1:N0}' -f ($BriefcaseAmountsAll.Value | Sort-Object)[0],($BriefcaseAmountsAll.Value | Sort-Object)[-1])
 
 Write-Verbose "Listing all $($BriefcaseAmountsAll.Count) possible cases in the BriefcaseAmountsAll"
-Write-Output 'Now select you case!'
+Write-Output 'Now select your case to keep!'
 $UsersCaseSelection = $BriefcaseAmountsAll.GetEnumerator().Name |
     Sort-Object | 
     Select-Object @{Name='Case';Expression={$PSItem}} |
@@ -98,9 +99,9 @@ Remove-CaseFromHashtable -CaseNumber $UsersCaseSelection.Case
 
 Write-Output "You selected case $($UsersCaseSelection.Case), now lets hang onto that for you"
 Pause
-Clear-Host
 
 for ($Round = 1; $Round -le 10; $Round++) {
+    Clear-Host #Clean the screen each loop 
     if (!($Round -eq 10)) {
         $CasesToOpen = $RoundRules[$Round - 1].Value
         Write-Output "Welcome to round $Round, before we continue you will have to open $CasesToOpen cases"
@@ -128,7 +129,39 @@ for ($Round = 1; $Round -le 10; $Round++) {
         #End of round, bankers offer
         Pause
     } else {
-        Write-Output "Welcome to round $Round, this is different and we will "
+        Write-Output "Welcome to round $Round, this is different and we will allow you to switch cases if you choose"
+
+        $CaseSwapTitle = "Decision Time"
+        $CaseSwapMessage = "Your case is $($UsersCaseSelection.Case) and you can swap with case $($BriefcaseAmountsAll.Key), would you like to switch cases?"
+        
+        $CaseKeep = New-Object System.Management.Automation.Host.ChoiceDescription "&Keep", 'Keep your case'
+        $CaseSwap = New-Object System.Management.Automation.Host.ChoiceDescription "&Swap", 'Swap your case'
+        
+        $CaseSwapOptions = [System.Management.Automation.Host.ChoiceDescription[]]($CaseKeep, $CaseSwap)
+        $result = $host.ui.PromptForChoice($CaseSwapTitle, $CaseSwapMessage, $CaseSwapOptions, 0) 
+        
+        switch ($result) {
+            0 {
+                Write-Output 'You selected to keep your case'
+            }
+            1 {
+                Write-Output 'You selected to swap your case'
+                $UsersCaseSelection = $BriefcaseAmountsAll[0].Name #Swap the case
+            }
+        }
+
+        Clear-Host
+        Write-Output 'Ready to see the result?'
+        Pause
+
+        $CaseValue = $BriefcaseAmountsAllOriginal[($BriefcaseAmountsAllOriginal.Name.IndexOf($UsersCaseSelection.Case))].Value
+
+        #If statement to change where the decimal place is
+        if ($CaseValue -eq 0.1) {
+            Write-Output ('You win ${0:N1}!' -f $CaseValue)
+        } else {
+            Write-Output ('You win ${0:N0}!' -f $CaseValue)
+        }
     }
 }
 
