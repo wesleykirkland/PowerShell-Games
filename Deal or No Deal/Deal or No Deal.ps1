@@ -52,8 +52,8 @@ $BriefcaseValues = @(
     1000000
 ) | Sort-Object {Get-Random} # Randomize the array so the user selects at Random
 
-#Banker Offer Timers
-$BankerSleepTimerRange = @(3,10) #This is the mininium and maxiumum values for the bankers decision time, takes 2 values all others will be ignored
+#This is the mininium and maxiumum values for the bankers decision time, takes 2 values all others will be ignored
+$BankerSleepTimerRange = @(3,7)
 
 #Make a blank Arraylist to assign the case values to a case
 [System.Collections.ArrayList]$BriefcaseAmountsAll = @{}
@@ -72,6 +72,7 @@ for ($i = 0; $i -lt $BriefcaseValues.Count; $i++) {
     }
 }
 
+#Sort the briefcases and make a backup copy of the ArrayList for later lookups
 $BriefcaseAmountsAll = $BriefcaseAmountsAll.GetEnumerator() | Sort-Object Name
 $BriefcaseAmountsAllOriginal = $BriefcaseAmountsAll.Clone()
 
@@ -165,8 +166,9 @@ for ($Round = 1; $Round -le 10; $Round++) {
             Remove-CaseFromHashtable -CaseNumber $RoundSelectedCase.Case
         }
 
-        Clear-Host
-        Write-Output 'The Banker would like to make you an offer'
+        #Make a blank line for readability
+        Write-Output ''
+        Write-Output 'The Banker of thinking of an offer'
 
         #End of round, bankers offer
         $BankersOffer = Get-BankersOffer -BriefcaseAmountsAll $BriefcaseAmountsAll -Round $Round -BankerSleepTimerRange $BankerSleepTimerRange #Get the bankers offer
@@ -252,7 +254,7 @@ for ($Round = 1; $Round -le 10; $Round++) {
         if ([math]::Round($CaseValue) -lt $UsersCaseSelectionOriginal.Value) {
             Write-Output ('Sorry but your original case was worth ${0} you did win ${1} though!' -f (Get-CaseValue -Case $UsersCaseSelectionOriginal.Name -BriefcaseAmountsAllOriginal $BriefcaseAmountsAllOriginal),$CaseValue)
         } else {
-            Write-Output "You won big with a grand total of $WinningValue!"
+            Write-Output "You won big with a grand total of $CaseValue!"
         }
     }
 }
