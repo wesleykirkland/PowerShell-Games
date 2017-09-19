@@ -5,7 +5,7 @@
 #To Do
 Divide the cases into a left side and right side to provide commentary to the user if they made a good choice or bad choice
 TTS as Howie Mandell?
-#>5
+#>
 
 #Variables
 #Simple Hashtable to instruct the program of how many cases to open each Round/Batch
@@ -55,7 +55,8 @@ $BriefcaseValues = @(
 #Banker Offer Timers
 $BankerSleepTimerRange = @(3,10) #This is the mininium and maxiumum values for the bankers decision time, takes 2 values all others will be ignored
 
-[System.Collections.ArrayList]$BriefcaseAmountsAll = @{} #Make a blank hashtable to assign the case values to
+#Make a blank Arraylist to assign the case values to a case
+[System.Collections.ArrayList]$BriefcaseAmountsAll = @{}
 
 #Take the random values and assign them to their cases (hashtable)
 for ($i = 0; $i -lt $BriefcaseValues.Count; $i++) {
@@ -74,7 +75,8 @@ for ($i = 0; $i -lt $BriefcaseValues.Count; $i++) {
 $BriefcaseAmountsAll = $BriefcaseAmountsAll.GetEnumerator() | Sort-Object Name
 $BriefcaseAmountsAllOriginal = $BriefcaseAmountsAll.Clone()
 
-[System.Collections.ArrayList]$BankersOfferHistory = @() #Make a blank array to store the bankers offers to
+#Make a blank ArrayList to store the bankers offers to
+[System.Collections.ArrayList]$BankersOfferHistory = @()
 
 #Functions
 #Function to remove the user selected case from the Hashtable, this will always take the real work case number and find the corresponding entry
@@ -115,7 +117,7 @@ function Get-CaseValue ($Case, $BriefcaseAmountsAllOriginal) {
 
 Clear-Host
 
-Write-Output 'Welcome to the text based version of Deal or no Deal staring you & PowerShell!'
+Write-Output 'Welcome to the text based version of Deal or no Deal starring you & PowerShell!'
 Pause
 Clear-Host
 Write-Output 'Before we can continue, you need to select a briefcase to hold onto throughout the game'
@@ -135,7 +137,9 @@ Write-Output "You selected case $($UsersCaseSelection.Case), now lets hang onto 
 Pause
 
 for ($Round = 1; $Round -le 10; $Round++) {
-    Clear-Host #Clean the screen each loop 
+    #Clean the screen each loop
+    Clear-Host
+
     if (!($Round -eq 10)) {
         $CasesToOpen = $RoundRules[$Round - 1].Value
         Write-Output "Welcome to round $Round, before we continue you will have to open $CasesToOpen case(s)"
@@ -157,7 +161,8 @@ for ($Round = 1; $Round -le 10; $Round++) {
                 Write-Output ('You selected case {0} which had a value of ${1:N0}' -f $RoundSelectedCase.Case, $CaseValue)
             }
 
-            Remove-CaseFromHashtable -CaseNumber $RoundSelectedCase.Case #Remove the selected case so we don't see it anymore
+            #Remove the selected case so we don't see it anymore
+            Remove-CaseFromHashtable -CaseNumber $RoundSelectedCase.Case
         }
 
         Clear-Host
@@ -231,7 +236,8 @@ for ($Round = 1; $Round -le 10; $Round++) {
             }
             1 {
                 Write-Output 'You selected to swap your case'
-                $UsersCaseSelection = $BriefcaseAmountsAll[0].Name #Swap the case
+                #Swap the case
+                $UsersCaseSelection = $BriefcaseAmountsAll[0].Name
             }
         }
 
